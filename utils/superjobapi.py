@@ -5,8 +5,20 @@ from settings import SUPERJOB_API_ENDPOINT, SUPERJOB_API_KEY
 
 
 class SuperJobDataHandler:
+    """Parser for response data from superjob.ru."""
+
     @staticmethod
-    def vacancy_parser(data: dict):
+    def vacancy_parser(data: dict) -> list[dict]:
+        """Get from superjob.ru JSON response necessary data.
+
+        Args:
+            data (dict): JSON response from superjob.ru.
+
+        Returns:
+            list[dict]: necessary data from all vacancy JSON data.
+
+        """
+
         clear_vacancies = []
 
         for vacancy in data['objects']:
@@ -24,39 +36,46 @@ class SuperJobDataHandler:
 
 
 class SuperJobAPI(AbstractAPI):
+    """API class, that allows to get data from superjob.ru.
+
+    Attributes:
+        max_results (int): Max results per response. Default=20, max=100.
+        period (int): Vacancy publication period
+            1 = 24 hours, 3 = 3 days, 7 = 7 days, 0 = all time.
+
+    """
+
     def __init__(self):
-        self.SUPERJOB_API_ENDPOINT = SUPERJOB_API_ENDPOINT
-        self.SUPERJOB_API_KEY = SUPERJOB_API_KEY
-        self.host = "api.superjob.ru"
-        self.authorization = "Bearer r.000000010000001.example.access_token"
-        self.content_type = "application/x-www-form-urlencoded"
+        self._SUPERJOB_API_ENDPOINT = SUPERJOB_API_ENDPOINT
+        self._SUPERJOB_API_KEY = SUPERJOB_API_KEY
+        self._host = "api.superjob.ru"
+        self._authorization = "Bearer r.000000010000001.example.access_token"
+        self._content_type = "application/x-www-form-urlencoded"
 
-        self.max_results = 20  # Results per response. Default = 20. Max = 100.
-        # Empty town string should give results across Russia.
-        # Can be "moscow", "saint-petersburg" or etc.
-        # for particular search by town.
-        self.town = ""
-        self.required_vacancy = None  # ?
-        self.period = 3  # Publication period. 1 = 24 hours, 3 = 3 days, 7 = 7 days, 0 = all time.
+        self.max_results = 20
+        self.period = 3
 
-        # self.profession = None
-        # self.firm_name = None
-        # self.payment = None
-        # self.description = None
-        # self.address = None
+    def get_vacancies(self, required_vacancy: str) -> list[dict]:
+        """Get vacancies from superjob.ru.
 
-    def get_vacancies(self, required_vacancy: str):
-        self.required_vacancy = required_vacancy
+        Args:
+            required_vacancy (str): required query string.
 
-        headers = {"Host": self.host,
-                   "X-Api-App-Id": SUPERJOB_API_KEY,
-                   "Authorization": self.authorization,
-                   "Content-Type": self.content_type}
+        Returns:
+            list[dict]: response data runs through
+                SuperJobDataHandler class and become pure to work with.
 
-        params = {"keyword": self.required_vacancy,
-                  "town": self.town,
+        """
+        headers = {"Host": self._host,
+                   "X-Api-App-Id": self._SUPERJOB_API_KEY,
+                   "Authorization": self._authorization,
+                   "Content-Type": self._content_type}
+
+        params = {"keyword": required_vacancy,
                   "count": self.max_results,
                   "period": self.period}
 
-        response = requests.get(self.SUPERJOB_API_ENDPOINT, headers=headers, params=params)
+        response = requests.get(self._SUPERJOB_API_ENDPOINT,
+                                headers=headers,
+                                params=params)
         return SuperJobDataHandler.vacancy_parser(response.json())

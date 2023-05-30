@@ -11,6 +11,7 @@ headhunter_api = HeadHunterAPI()
 
 
 def main():
+    """Main function."""
     search_query = input("Введите поисковый запрос: ")
     top_n = int(input("Введите количество вакансий для вывода в топ N: "))
 

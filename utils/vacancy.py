@@ -2,6 +2,22 @@ import re
 
 
 class Vacancy:
+    """Allows to encapsulate vacancy data in an instance.
+
+    Args:
+        vacancy_data (dict[str]): dict with vacancy data.
+
+    Attributes:
+        all_vacancies (list[Vacancy]): contains info about all created vacations.
+        profession (str): Vacancy profession.
+        firm_name (str): Firm, that looks for employee.
+        link (str): Job posting link.
+        payment_from (int): Start payment value.
+        payment_to (int): Finish payment value.
+        town (str): Job area.
+
+    """
+
     all_vacancies = []
 
     def __init__(self, vacancy_data: dict[str]):
@@ -19,7 +35,13 @@ class Vacancy:
 
         Vacancy.all_vacancies.append(self)
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
+        """Representing Vacancy instance data as dict.
+
+        Returns:
+            dict:
+
+        """
         return {
             "profession": self.profession,
             "firm_name": self.firm_name,
@@ -31,10 +53,14 @@ class Vacancy:
         }
 
     def __repr__(self):
-        return f'Vacancy{(self.profession, self.firm_name, self.payment_from, self.payment_to, self.description, self.town, self.link)}'
+        return f'Vacancy({self.profession}, {self.firm_name}, ' \
+               f'{self.payment_from}, {self.payment_to}, ' \
+               f'{self.description}, {self.town}, {self.link})'
 
     def __str__(self):
-        return f"{self.profession}\n{self.firm_name}\n{self.payment_from}\n{self.payment_to}\n{self.description}\n{self.town}\n{self.link}\n"
+        return f"{self.profession}\n{self.firm_name}\n" \
+               f"{self.payment_from}\n{self.payment_to}\n" \
+               f"{self.description}\n{self.town}\n{self.link}\n"
 
     def __eq__(self, other):
         return self.payment_from == other.payment_from
