@@ -19,6 +19,12 @@ class HeadHunterDataHandler:
                 "payment_to": vacancy['salary']['to'],
                 "town": vacancy['area']['name']
             }
+            if single_vacancy["payment_from"] is None:
+                single_vacancy["payment_from"] = 0
+            if single_vacancy["payment_to"] is None:
+                single_vacancy["payment_to"] = 0
+
+
             clear_vacancies.append(single_vacancy)
         return clear_vacancies
 
